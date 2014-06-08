@@ -1,0 +1,4 @@
+class CLI{
+private:
+public:
+}
