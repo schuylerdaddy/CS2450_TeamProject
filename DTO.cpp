@@ -88,3 +88,93 @@ Patron::~Patron()
 {
 
 }
+
+Book::Book(string auth, string ttl)
+{
+	author = auth;
+	title = ttl;
+	idAssigned = false;
+	checkedIn = true;
+}
+
+// The GetAuthor Method
+// Purpose: To get the author of a certain book
+// Parameters: None
+// Returns: string
+// Pre-conditions: There is a valid author wanted for a specific book
+// Post-conditions: Author of specific book is returned to the user interface
+// -----------------------------------------------------------------
+string Book::GetAuthor()
+{
+	return author;
+}
+
+// The GetTitle Method
+// Purpose: To get the title of a certain book
+// Parameters: None
+// Returns: string
+// Pre-conditions: There is a valid title wanted for a specific book
+// Post-conditions: Title of specific book is returned to the user interface
+// -----------------------------------------------------------------
+string Book::GetTitle()
+{
+	return title;
+}
+
+// The GetCheckedInStatus Method
+// Purpose: To see if the book in question is checked in or checked out
+// Parameters: None
+// Returns: bool
+// Pre-conditions: The book exist in the library
+// Post-conditions: Wheather the book is checked in or checked out is returned to the user interface
+// -----------------------------------------------------------------
+bool Book::GetCheckedInStatus()
+{
+	return checkedIn;
+}
+
+// The CheckedIn Method
+// Purpose: To set the bool variable checkedIn to true
+// Parameters: None
+// Returns: None
+// Pre-conditions: The book exist within the library
+// Post-conditions: The book's checkedIn value is set to true
+// -----------------------------------------------------------------
+void Book::CheckIn()
+{
+	checkedIn = true;
+}
+
+// The CheckedOut Method
+// Purpose: To set the bool variable checkedIn to false
+// Parameters: None
+// Returns: None
+// Pre-conditions: The book exist within the library
+// Post-conditions: The book's checkedIn value is set to false
+// -----------------------------------------------------------------
+void Book::CheckOut()
+{
+	checkedIn = false;
+}
+
+void AssignId(int id)
+{
+  if(!idAssigned)
+    {
+      bookId = id;
+      idAssigned = true;
+    }
+  else
+    throw runtime_error("can't reassign book's id");
+}
+
+// The Book destructor
+// Purpose: To destroy a book
+// Parameters: None
+// Returns: None
+// Pre-conditions: The book actually exist within the library
+// Post-conditions: The book is deleted
+// -----------------------------------------------------------------
+Book::~Book()
+{
+}
