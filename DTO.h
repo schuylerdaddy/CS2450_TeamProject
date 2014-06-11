@@ -57,7 +57,7 @@ class Book
 		bool GetCheckedInStatus(); // What should I pass here? bookID? Title?
 		void CheckIn(); // Should there be a value passed here? bookID? Title?
 		void CheckOut(); // Should there be a value passed here? bookID? Title?
-		void AssignId();
+		void AssignId(int);
 		~Book();
 		// Do we want SetBookID() if we plan on adding books, movies, etc.? 
 		// maybe, just below the iceburg line
