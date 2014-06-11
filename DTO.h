@@ -13,12 +13,9 @@ class DueDate
 {
 public:
 	DueDate(int,int,int);
-	string GetDueDate(int); // I set this method with a bookID number because I still don't know if we are dealing with multiple of the same book.
-	string GetDueDate(string, string);
-	void SetDueDate(int); // I set this method with a bookID number because I still don't know if we are dealing with multiple of the same book.
-	void SetDueDate(string, string);
-	string ExtendDueDate(int); // This method is for a little extra if we want to look at the possibility to extend the due date once the book is out.
-	string ExtendDueDate(string, string); // Same as line above
+	int GetMonth();
+	int GetDay();
+	int GetYear();
 	~DueDate();
 private:
 	int month;
