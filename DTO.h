@@ -12,7 +12,7 @@ using namespace std;
 class DueDate
 {
 public:
-	DueDate(string,string,string);
+	DueDate(int,int,int);
 	string GetDueDate(int); // I set this method with a bookID number because I still don't know if we are dealing with multiple of the same book.
 	string GetDueDate(string, string);
 	void SetDueDate(int); // I set this method with a bookID number because I still don't know if we are dealing with multiple of the same book.
