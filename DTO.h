@@ -41,3 +41,30 @@ private:
 	int patronID; // In case there are 2 people with the same name we can use their library id card number
 	int age;
 };
+
+#include <string>
+
+using namespace std;
+
+// This class models a Book. It contains key information
+// about a book and methods to manage that data
+class Book
+{
+	public:
+		Book(string, string);
+		string GetAuthor(); // What should I pass here? bookID? or title?
+		string GetTitle(); // What should I pass here? bookID?
+		bool GetCheckedInStatus(); // What should I pass here? bookID? Title?
+		void CheckIn(); // Should there be a value passed here? bookID? Title?
+		void CheckOut(); // Should there be a value passed here? bookID? Title?
+		void AssignId();
+		~Book();
+		// Do we want SetBookID() if we plan on adding books, movies, etc.? 
+		// maybe, just below the iceburg line
+	private:
+		bool idAssigned;
+		string author;
+		string title;
+		int bookID;
+		bool checkedIn;
+};
