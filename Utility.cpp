@@ -1,5 +1,19 @@
 #include "Utility.h"
 
+map<MediaTypes,int> Utility::DaysByItemType = map<MediaTypes,int>();
+
+Utility::Utility()
+{
+    LoadDaysByItemType();
+}
+
+void Utility::LoadDaysByItemType()
+{
+    DaysByItemType[AdultBook] = 14;
+    DaysByItemType[ChildBook] = 7;
+    DaysByItemType[DVD] = 14;
+    DaysByItemType[VideoTape] = 21;
+}
 
 bool isWhiteSpace(char c)
 {
