@@ -1,5 +1,19 @@
+#define _SCL_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include "DTO.h"
 
+// Purpose: To initialize needed variables to default date
+// Parameters: none
+// Returns: None
+// Pre-conditions: None
+// Post-conditions: Specific variables initialized
+// -----------------------------------------------------------------
+DueDate::DueDate(){
+	month = 1;
+	day = 1;
+	year = 9999;
+
+}
 
 // Purpose: To initialize needed variables
 // Parameters: None
@@ -89,12 +103,42 @@ Patron::~Patron()
 
 }
 
-Book::Book(string auth, string ttl)
+Patron Patron::ReadPatron(istream& is){
+	PatronRec inputRec;
+	is.read(reinterpret_cast<char*>(&inputRec), sizeof(inputRec));
+	
+	Patron user(inputRec.firstName, inputRec.lastName, inputRec.adult);
+	user.AssignPatronId(inputRec.id);
+	int i = 0;
+	while (inputRec.book[i] != 0)
+		user.bookList.push_back(inputRec.book[i]);
+
+	return user;	
+}
+
+void Patron::SavePatron(ostream& os){
+	if (!os)
+		throw runtime_error("error saving patron information 2");
+	PatronRec outputRec;
+	outputRec.adult = adult;
+	outputRec.id = patronID;
+	outputRec.age = age;
+	strncpy(outputRec.lastName, patronLastName.c_str(), 15)[15] = '\0';
+	strncpy(outputRec.firstName, patronFirstName.c_str(), 15)[15] = '\0';
+	for (int i = 0; i < bookList.size(); ++i)
+		outputRec.book[i] = bookList[i];
+	for (int i=bookList.size(); i<6; ++i)
+		outputRec.book[i] = 0;
+	os.write(reinterpret_cast<const char*>(&outputRec), sizeof(outputRec));
+} 
+
+Book::Book(string auth, string ttl, int _type)
 {
 	author = auth;
 	title = ttl;
 	idAssigned = false;
 	checkedIn = true;
+	type=_type;
 }
 
 // The GetAuthor Method
@@ -177,4 +221,31 @@ void AssignId(int id)
 // -----------------------------------------------------------------
 Book::~Book()
 {
+}
+
+void Media::Save(ostream& os){
+	MediaRec outputRec;
+	outputRec.checkIn = checkedIn;
+	outputRec.id = mediaID;
+	strncpy(outputRec.author, author.c_str(), 15)[15] = '\0';
+	strncpy(outputRec.title, title.c_str(), 30)[30] = '\0';
+	outputRec.type = type;
+	outputRec.due = due;
+	
+	os.write(reinterpret_cast<const char*>(&outputRec), sizeof(outputRec));
+}
+
+Media Media::read(istream& is){
+	MediaRec inputRec;
+	is.read(reinterpret_cast<char*>(&inputRec), sizeof(inputRec));
+	//MediaRec inputRec = *(reinterpret_cast<MediaRec*>(data));
+	Media item (inputRec.author, inputRec.title, inputRec.type);
+	item.AssignId(inputRec.id);
+	if (!inputRec.checkIn) item.checkedIn = false;
+
+	return item;
+}
+
+int Media::getID(){
+	return mediaID;
 }
