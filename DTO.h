@@ -1,9 +1,13 @@
+//#include"Utility.h"
+//include class prototypes/headers here
+
 #pragma once
 #include <string>
 #include <vector>
 
 using namespace std;
 
+int const MAXBOOKSCHECKOUT=6;
 
 // This class models a DueDate. It contains key information
 // about a checked-out-item and methods to manage that data
@@ -11,15 +15,23 @@ class DueDate
 {
 public:
 	DueDate();
+	DueDate(int);//conversion constructor;
 	DueDate(int, int, int);
+	void SetDefaultDate();
 	int GetMonth();
 	int GetDay();
 	int GetYear();
+	DueDate operator+=(const DueDate&);
+	bool operator>(const DueDate&);
 private:
 	int month;
 	int day;
 	int year;
 };
+
+inline DueDate operator+(DueDate date1, const DueDate& date2){
+	return date1 += date2;
+}
 
 // This class models a DueDate. It contains key information
 // about a checked-out-item and methods to manage that data
@@ -32,6 +44,8 @@ public:
 	static Patron ReadPatron(istream&);
 	void SavePatron(ostream&);
 	int getID(){ return patronID; };
+	void checkinBook(int);
+	void checkoutBook(int);
 	~Patron();
 private:
 	struct PatronRec{
@@ -40,7 +54,7 @@ private:
 			char firstName[15];
 			int age;
 			bool adult;
-			int book[6];
+			int book[MAXBOOKSCHECKOUT];
 	};
 	bool idAssigned;
 	bool adult;
@@ -86,3 +100,4 @@ private:
 		DueDate due;
 	};
 };
+
