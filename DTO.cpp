@@ -12,43 +12,75 @@ DueDate::DueDate(){
 	month = 1;
 	day = 1;
 	year = 9999;
-
 }
 
+DueDate::DueDate(int _day){
+	day = _day;
+}
 // Purpose: To initialize needed variables
-// Parameters: None
+// Parameters: month, day, year as integers
 // Returns: None
 // Pre-conditions: None
 // Post-conditions: Specific variables initialized
 // -----------------------------------------------------------------
-DueDate::DueDate(int m,int d,int y)
+DueDate::DueDate(int m, int d, int y)
 {
-  if(m>12 || m<1 || d<1 || d>31)
-    throw runtime_error("invalid date");
-  month = m;
-  day = d;
-  year = y;
+	if (m>12 || m<1 || d<1 || d>31)
+		throw runtime_error("invalid date");
+	month = m;
+	day = d;
+	year = y;
 }
 
-int DueDate::GetMonth()
-{
-  return month;
+void DueDate::SetDefaultDate(){
+	month = 1;
+	day = 1;
+	year = 9999;
 }
 
-int DueDate::GetDay()
-{
-  return day;
+DueDate DueDate::operator+=(const DueDate& date){
+	day += date.day;
+	if (day > 31){ //CHANGE WITH MAP
+		day = day - 31;
+		month++;
+		if (month > 12){
+			month = 1;
+			year++;
+		}
+	}
+	return *this;
 }
 
-int DueDate::GetYear()
-{
-  return year;
+bool DueDate::operator> (const DueDate& date){
+	if (year > date.year)
+		return true;
+	else if (year < date.year)
+		return false;
+	else if (month>date.month)
+		return true;
+	else if (month < date.month)
+		return false;
+	else if (day>date.day)
+		return true;
+	else
+		return false;
+
+}
+//getters
+
+int DueDate::GetMonth(){
+	return month;
 }
 
-DueDate::~DueDate()
-{
+int DueDate::GetDay(){
+	return day;
 }
 
+int DueDate::GetYear(){
+	return year;
+}
+
+//Patron class
 //define constructors and function implementations here
 // The constructor
 // Purpose: To initialize needed variables
@@ -57,13 +89,12 @@ DueDate::~DueDate()
 // Pre-conditions: None
 // Post-conditions: Specific variables initialized
 // -----------------------------------------------------------------
-Patron::Patron(string fName, string lName,bool isAdult)
+Patron::Patron(string fName, string lName, bool isAdult)
 {
-  patronFirstName = fName;
-  patronLastName = lName;
-  adult = isAdult;
-  bookList = new vector<int>();
-  idAssigned = false;
+	patronFirstName = fName;
+	patronLastName = lName;
+	adult = isAdult;
+	idAssigned = false;
 }
 
 // The GetBookList Method
@@ -73,35 +104,22 @@ Patron::Patron(string fName, string lName,bool isAdult)
 // Pre-conditions: Valid parameter values in order to see which books a certain patron has checked out
 // Post-conditions: A list of books that the patron currecntly has checked out is returned to the user interface
 // -----------------------------------------------------------------
-vector<int> Patron::GetBookList()
+vector<int> Patron::GetBookList(int id)
 {
 	return bookList;
 }
 
 void Patron::AssignPatronId(int id)
 {
-  if(!idAssigned)
-    {
-      idAssigned = true;
-      patronID = id;
-    }
-  else
-    {
-      throw runtime_error("Can't reassign user id");
-    }
+	if (!idAssigned){
+		idAssigned = true;
+		patronID = id;
+	}
+	else{
+		throw runtime_error("Can't reassign user id");
+	}
 }
 
-// The Patron Destructor
-// Purpose: To delete a patron
-// Parameters: None
-// Returns: None
-// Pre-conditions: Patron that we are attempting to delete exist and can be deleted
-// Post-conditions: Correct patron deleted
-// -----------------------------------------------------------------
-Patron::~Patron()
-{
-
-}
 
 Patron Patron::ReadPatron(istream& is){
 	PatronRec inputRec;
@@ -125,20 +143,49 @@ void Patron::SavePatron(ostream& os){
 	outputRec.age = age;
 	strncpy(outputRec.lastName, patronLastName.c_str(), 15)[15] = '\0';
 	strncpy(outputRec.firstName, patronFirstName.c_str(), 15)[15] = '\0';
-	for (int i = 0; i < bookList.size(); ++i)
+	for (size_t i = 0; i < bookList.size(); ++i)
 		outputRec.book[i] = bookList[i];
 	for (int i=bookList.size(); i<6; ++i)
 		outputRec.book[i] = 0;
 	os.write(reinterpret_cast<const char*>(&outputRec), sizeof(outputRec));
 } 
 
-Book::Book(string auth, string ttl, int _type)
+void Patron::checkinBook(int itemID){
+	for (size_t i = 0; i < bookList.size(); ++i){
+		if (bookList[i] == itemID){
+			bookList.erase(bookList.begin() + i);
+			break;
+		}
+
+	}
+}
+
+void Patron::checkoutBook(int itemID){
+	if (bookList.size() < MAXBOOKSCHECKOUT)
+		bookList.push_back(itemID);
+	else
+		throw runtime_error("Too many books checked out.");
+}
+
+// The Patron Destructor
+// Purpose: To delete a patron
+// Parameters: None
+// Returns: None
+// Pre-conditions: Patron that we are attempting to delete exist and can be deleted
+// Post-conditions: Correct patron deleted
+// -----------------------------------------------------------------
+Patron::~Patron()
+{
+
+}
+
+Media::Media(string auth, string ttl, int _type)
 {
 	author = auth;
 	title = ttl;
+	type = _type;
 	idAssigned = false;
 	checkedIn = true;
-	type=_type;
 }
 
 // The GetAuthor Method
@@ -148,7 +195,7 @@ Book::Book(string auth, string ttl, int _type)
 // Pre-conditions: There is a valid author wanted for a specific book
 // Post-conditions: Author of specific book is returned to the user interface
 // -----------------------------------------------------------------
-string Book::GetAuthor()
+string Media::GetAuthor()
 {
 	return author;
 }
@@ -160,7 +207,7 @@ string Book::GetAuthor()
 // Pre-conditions: There is a valid title wanted for a specific book
 // Post-conditions: Title of specific book is returned to the user interface
 // -----------------------------------------------------------------
-string Book::GetTitle()
+string Media::GetTitle()
 {
 	return title;
 }
@@ -172,7 +219,7 @@ string Book::GetTitle()
 // Pre-conditions: The book exist in the library
 // Post-conditions: Wheather the book is checked in or checked out is returned to the user interface
 // -----------------------------------------------------------------
-bool Book::GetCheckedInStatus()
+bool Media::GetCheckedInStatus()
 {
 	return checkedIn;
 }
@@ -184,9 +231,10 @@ bool Book::GetCheckedInStatus()
 // Pre-conditions: The book exist within the library
 // Post-conditions: The book's checkedIn value is set to true
 // -----------------------------------------------------------------
-void Book::CheckIn()
+void Media::CheckIn()
 {
 	checkedIn = true;
+	due.SetDefaultDate();
 }
 
 // The CheckedOut Method
@@ -196,20 +244,21 @@ void Book::CheckIn()
 // Pre-conditions: The book exist within the library
 // Post-conditions: The book's checkedIn value is set to false
 // -----------------------------------------------------------------
-void Book::CheckOut()
+void Media::CheckOut()
 {
 	checkedIn = false;
+	//need to change date
 }
 
-void AssignId(int id)
+void Media::AssignId(int id)
 {
-  if(!idAssigned)
-    {
-      bookId = id;
-      idAssigned = true;
-    }
-  else
-    throw runtime_error("can't reassign book's id");
+	if (!idAssigned)
+	{
+		mediaID = id;
+		idAssigned = true;
+	}
+	else
+		throw runtime_error("can't reassign book's id");
 }
 
 // The Book destructor
@@ -219,7 +268,7 @@ void AssignId(int id)
 // Pre-conditions: The book actually exist within the library
 // Post-conditions: The book is deleted
 // -----------------------------------------------------------------
-Book::~Book()
+Media::~Media()
 {
 }
 
