@@ -59,3 +59,62 @@ string Utility::Trim(string s)
 	s = Trimback(s);
 	return s;
 }
+
+string Utility::GetCurrentDate()
+{
+
+		time_t t = time(0);   // get time now
+		struct tm *now = nullptr;
+		localtime_s(now,&t);
+
+		return to_string(now->tm_mon + 1) + '-' + to_string(now->tm_mday) + '-' + to_string(now->tm_year + 1900);
+}
+
+bool Utility::IsLeapYear(int year)
+{
+	if (year % 4 != 0) return false;
+	else if (year % 100 != 0) return true;
+	else if (year % 400) return false; 
+	else return true;
+}
+
+map<int, int> Utility::GetDayCountbyMonth()
+{
+	map<int, int> m;
+	m[1] = 31;
+	m[3] = 30;
+	m[4] = 30;
+	m[5] = 31;
+	m[6] = 30;
+	m[7] = 31;
+	m[8] = 31;
+	m[9] = 30;
+	m[10] = 31;
+	m[11] = 30;
+	m[12] = 31;
+		m[2] = 28;
+
+	return m;
+}
+
+map<int, int> Utility::GetDayCountbyMonth(int year)
+{
+	map<int, int> m;
+	m[1] = 31;
+	m[3] = 30;
+	m[4] = 30;
+	m[5] = 31;
+	m[6] = 30;
+	m[7] = 31;
+	m[8] = 31;
+	m[9] = 30;
+	m[10] = 31;
+	m[11] = 30;
+	m[12] = 31;
+	if (IsLeapYear(year))
+		m[2] = 29;
+	else
+		m[2] = 28;
+
+	return m;
+}
