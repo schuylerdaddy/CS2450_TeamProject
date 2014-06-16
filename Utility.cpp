@@ -11,8 +11,8 @@ void Utility::LoadDaysByItemType()
 {
     DaysByItemType[AdultBook] = 14;
     DaysByItemType[ChildBook] = 7;
-    DaysByItemType[DVD] = 14;
-    DaysByItemType[VideoTape] = 21;
+    DaysByItemType[DVD] = 2;
+    DaysByItemType[VideoTape] = 3;
 }
 
 bool isWhiteSpace(char c)
