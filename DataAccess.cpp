@@ -49,7 +49,7 @@ Media DataAccess::readBook(int id){
 vector<Media> DataAccess::readBook(){
 	vector<Media> mediaList;
 	for (int i = 0; i<maxBooks; ++i){
-		mediaList.push_back(readBook(i));
+		mediaList.push_back(readBook(i+1));
 	}
 	return mediaList;
 }
@@ -60,6 +60,14 @@ void DataAccess::saveBook(Media bookInfo){
 	bookStream.seekg(id*BOOK_BLOCKSIZE, ios::beg);
 	bookInfo.Save(bookStream);
 	if (!bookStream) throw runtime_error("error saving book information");
+}
+
+void DataAccess::addBook(Media bookInfo){
+	maxBooks++;
+	bookInfo.AssignId(maxBooks);
+	bookStream.seekg(0, ios::beg);
+	bookStream.write(reinterpret_cast<char*>(&maxBooks), sizeof(int));
+	saveBook(bookInfo);
 }
 
 Patron DataAccess::readPatron(int id){
@@ -74,16 +82,24 @@ Patron DataAccess::readPatron(int id){
 vector<Patron> DataAccess::readPatron(){
 	vector<Patron> patronList;
 	for (int i = 0; i<maxPatrons; ++i){
-		patronList.push_back(readPatron(i));
+		patronList.push_back(readPatron(i+1));
 	}
 	return patronList;
 }
 void DataAccess::savePatron(Patron patronInfo){
 	
 	int id = patronInfo.getID();
-	if (id > maxPatrons) throw runtime_error("overflow, error saving patron information");
+//	if (id > maxPatrons) throw runtime_error("overflow, error saving patron information");
 	patronStream.seekg(id*PATRON_BLOCKSIZE, ios::beg);
 	patronInfo.SavePatron(patronStream);
 	if (!patronStream) 
 		throw runtime_error("error saving patron information");
+}
+
+void DataAccess::addPatron(Patron patronInfo){
+	maxPatrons++;
+	patronInfo.AssignPatronId(maxPatrons);
+	patronStream.seekg(0, ios::beg);
+	patronStream.write(reinterpret_cast<char*>(&maxPatrons), sizeof(int));
+	savePatron(patronInfo);
 }
