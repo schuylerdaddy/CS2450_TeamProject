@@ -49,8 +49,9 @@ void Date::SetDefaultDate(){
 
 Date Date::operator+=(const Date& date){
 	day += date.day;
-	if (day > 31){ //CHANGE WITH MAP
-		day = day - 31;
+	map<int, int> numday = Utility::GetDayCountbyMonth(year);
+	if (day > numday[month]){ 
+		day = day - numday[month];
 		month++;
 		if (month > 12){
 			month = 1;
