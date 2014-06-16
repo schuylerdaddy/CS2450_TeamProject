@@ -23,7 +23,9 @@ public:
 	Media readBook(int);
 	vector<Media> readBook();
 	void saveBook(Media);
+	void addBook(Media bookInfo);
 	Patron readPatron(int);
 	vector<Patron> readPatron();
 	void savePatron(Patron);
+	void addPatron(Patron);
 };
