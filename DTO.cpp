@@ -1,6 +1,9 @@
 #define _SCL_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #include "DTO.h"
+#include <iostream>
+
+using namespace std;
 
 // Purpose: To initialize needed variables to default date
 // Parameters: none
@@ -8,47 +11,90 @@
 // Pre-conditions: None
 // Post-conditions: Specific variables initialized
 // -----------------------------------------------------------------
-DueDate::DueDate(){
-	month = 1;
-	day = 1;
-	year = 9999;
-
+Date::Date(){
+	string current = Utility::GetCurrentDate();
+	//parse current string to set date
+	int pos = current.find("-");
+	month = stoi(current.substr(0, pos ));
+	int pos2 = current.find("-", pos + 1);
+	day = stoi(current.substr(pos + 1, pos2 - pos));
+	year = stoi(current.substr(pos2 + 1));
 }
 
+Date::Date(int _day){
+	day = _day;
+}
 // Purpose: To initialize needed variables
-// Parameters: None
+// Parameters: month, day, year as integers
 // Returns: None
 // Pre-conditions: None
 // Post-conditions: Specific variables initialized
 // -----------------------------------------------------------------
-DueDate::DueDate(int m,int d,int y)
+Date::Date(int m, int d, int y)
 {
-  if(m>12 || m<1 || d<1 || d>31)
-    throw runtime_error("invalid date");
-  month = m;
-  day = d;
-  year = y;
+	if (m>12 || m<1 || d<1 || d>31)
+		throw runtime_error("invalid date");
+	month = m;
+	day = d;
+	year = y;
 }
 
-int DueDate::GetMonth()
-{
-  return month;
+void Date::SetDefaultDate(){
+	month = 1;
+	day = 1;
+	year = 9999;
 }
 
-int DueDate::GetDay()
-{
-  return day;
+
+
+Date Date::operator+=(const Date& date){
+	day += date.day;
+	if (day > 31){ //CHANGE WITH MAP
+		day = day - 31;
+		month++;
+		if (month > 12){
+			month = 1;
+			year++;
+		}
+	}
+	return *this;
 }
 
-int DueDate::GetYear()
-{
-  return year;
+bool Date::operator> (const Date& date){
+	if (year > date.year)
+		return true;
+	else if (year < date.year)
+		return false;
+	else if (month>date.month)
+		return true;
+	else if (month < date.month)
+		return false;
+	else if (day>date.day)
+		return true;
+	else
+		return false;
+
 }
 
-DueDate::~DueDate()
-{
+void Date::display(){
+	cout << month << "/" << day << "/" << year;
 }
 
+//getters
+
+int Date::GetMonth(){
+	return month;
+}
+
+int Date::GetDay(){
+	return day;
+}
+
+int Date::GetYear(){
+	return year;
+}
+
+//Patron class
 //define constructors and function implementations here
 // The constructor
 // Purpose: To initialize needed variables
@@ -57,18 +103,17 @@ DueDate::~DueDate()
 // Pre-conditions: None
 // Post-conditions: Specific variables initialized
 // -----------------------------------------------------------------
-Patron::Patron(string fName, string lName,bool isAdult)
+Patron::Patron(string fName, string lName, bool isAdult)
 {
-  patronFirstName = fName;
-  patronLastName = lName;
-  adult = isAdult;
-  bookList = new vector<int>();
-  idAssigned = false;
+	patronFirstName = fName;
+	patronLastName = lName;
+	adult = isAdult;
+	idAssigned = false;
 }
 
 // The GetBookList Method
 // Purpose: To see which books a certain patron has checked out
-// Parameters: 1 int (int patronID)
+// Parameters: none
 // Returns: string
 // Pre-conditions: Valid parameter values in order to see which books a certain patron has checked out
 // Post-conditions: A list of books that the patron currecntly has checked out is returned to the user interface
@@ -80,17 +125,83 @@ vector<int> Patron::GetBookList()
 
 void Patron::AssignPatronId(int id)
 {
-  if(!idAssigned)
-    {
-      idAssigned = true;
-      patronID = id;
-    }
-  else
-    {
-      throw runtime_error("Can't reassign user id");
-    }
+	if (!idAssigned){
+		idAssigned = true;
+		patronID = id;
+	}
+	else{
+		throw runtime_error("Can't reassign user id");
+	}
 }
 
+
+Patron Patron::ReadPatron(istream& is){
+	PatronRec inputRec;
+	is.read(reinterpret_cast<char*>(&inputRec), sizeof(inputRec));
+	
+	Patron user(inputRec.firstName, inputRec.lastName, inputRec.adult);
+	user.AssignPatronId(inputRec.id);
+	int i = 0;
+	while (inputRec.book[i] != 0){
+		user.bookList.push_back(inputRec.book[i]);
+		++i;
+	}
+
+	return user;	
+}
+
+void Patron::SavePatron(ostream& os){
+	if (!os)
+		throw runtime_error("error saving patron information 2");
+	PatronRec outputRec;
+	outputRec.adult = adult;
+	outputRec.id = patronID;
+	//outputRec.age = age;
+	strncpy(outputRec.lastName, patronLastName.c_str(), 15)[15] = '\0';
+	strncpy(outputRec.firstName, patronFirstName.c_str(), 15)[15] = '\0';
+	for (size_t i = 0; i < bookList.size(); ++i)
+		outputRec.book[i] = bookList[i];
+	for (int i=bookList.size(); i<6; ++i)
+		outputRec.book[i] = 0;
+	os.write(reinterpret_cast<const char*>(&outputRec), sizeof(outputRec));
+} 
+
+void Patron::checkinBook(int itemID){
+	bool found = false;
+	for (size_t i = 0; i < bookList.size(); ++i){
+		if (bookList[i] == itemID){
+			bookList.erase(bookList.begin() + i);
+			found = true;
+			break;
+		}
+	}
+	if (!found)
+		throw runtime_error("Book not borrowed by patron");
+}
+
+void Patron::checkoutBook(int itemID){
+	if (bookList.size() < MAXBOOKSCHECKOUT)
+		bookList.push_back(itemID);
+	else
+		throw runtime_error("Too many books checked out.");
+}
+
+bool Patron::canBorrow(){
+	if (adult){
+		if (bookList.size() < MAXBOOKSCHECKOUT)
+			return true;
+		else return false;
+	}
+	else
+	if (bookList.size() < CHILDLIMIT)
+		return true;
+	else
+		return false;
+}
+
+void Patron::displayPatronInfo(){
+	cout << patronID << ": " << patronFirstName << " " << patronLastName<<endl;
+}
 // The Patron Destructor
 // Purpose: To delete a patron
 // Parameters: None
@@ -103,42 +214,14 @@ Patron::~Patron()
 
 }
 
-Patron Patron::ReadPatron(istream& is){
-	PatronRec inputRec;
-	is.read(reinterpret_cast<char*>(&inputRec), sizeof(inputRec));
-	
-	Patron user(inputRec.firstName, inputRec.lastName, inputRec.adult);
-	user.AssignPatronId(inputRec.id);
-	int i = 0;
-	while (inputRec.book[i] != 0)
-		user.bookList.push_back(inputRec.book[i]);
-
-	return user;	
-}
-
-void Patron::SavePatron(ostream& os){
-	if (!os)
-		throw runtime_error("error saving patron information 2");
-	PatronRec outputRec;
-	outputRec.adult = adult;
-	outputRec.id = patronID;
-	outputRec.age = age;
-	strncpy(outputRec.lastName, patronLastName.c_str(), 15)[15] = '\0';
-	strncpy(outputRec.firstName, patronFirstName.c_str(), 15)[15] = '\0';
-	for (int i = 0; i < bookList.size(); ++i)
-		outputRec.book[i] = bookList[i];
-	for (int i=bookList.size(); i<6; ++i)
-		outputRec.book[i] = 0;
-	os.write(reinterpret_cast<const char*>(&outputRec), sizeof(outputRec));
-} 
-
-Book::Book(string auth, string ttl, int _type)
+Media::Media(string auth, string ttl, MediaTypes _type)
 {
 	author = auth;
 	title = ttl;
+	type = _type;
+	due.SetDefaultDate();
 	idAssigned = false;
 	checkedIn = true;
-	type=_type;
 }
 
 // The GetAuthor Method
@@ -148,7 +231,7 @@ Book::Book(string auth, string ttl, int _type)
 // Pre-conditions: There is a valid author wanted for a specific book
 // Post-conditions: Author of specific book is returned to the user interface
 // -----------------------------------------------------------------
-string Book::GetAuthor()
+string Media::GetAuthor()
 {
 	return author;
 }
@@ -160,7 +243,7 @@ string Book::GetAuthor()
 // Pre-conditions: There is a valid title wanted for a specific book
 // Post-conditions: Title of specific book is returned to the user interface
 // -----------------------------------------------------------------
-string Book::GetTitle()
+string Media::GetTitle()
 {
 	return title;
 }
@@ -172,7 +255,7 @@ string Book::GetTitle()
 // Pre-conditions: The book exist in the library
 // Post-conditions: Wheather the book is checked in or checked out is returned to the user interface
 // -----------------------------------------------------------------
-bool Book::GetCheckedInStatus()
+bool Media::GetCheckedInStatus()
 {
 	return checkedIn;
 }
@@ -184,9 +267,10 @@ bool Book::GetCheckedInStatus()
 // Pre-conditions: The book exist within the library
 // Post-conditions: The book's checkedIn value is set to true
 // -----------------------------------------------------------------
-void Book::CheckIn()
+void Media::CheckIn()
 {
 	checkedIn = true;
+	due.SetDefaultDate();
 }
 
 // The CheckedOut Method
@@ -196,20 +280,22 @@ void Book::CheckIn()
 // Pre-conditions: The book exist within the library
 // Post-conditions: The book's checkedIn value is set to false
 // -----------------------------------------------------------------
-void Book::CheckOut()
+void Media::CheckOut(Date date)
 {
 	checkedIn = false;
+	//need to change date
+	due = date;
 }
 
-void AssignId(int id)
+void Media::AssignId(int id)
 {
-  if(!idAssigned)
-    {
-      bookId = id;
-      idAssigned = true;
-    }
-  else
-    throw runtime_error("can't reassign book's id");
+	if (!idAssigned)
+	{
+		mediaID = id;
+		idAssigned = true;
+	}
+	else
+		throw runtime_error("can't reassign book's id");
 }
 
 // The Book destructor
@@ -219,7 +305,7 @@ void AssignId(int id)
 // Pre-conditions: The book actually exist within the library
 // Post-conditions: The book is deleted
 // -----------------------------------------------------------------
-Book::~Book()
+Media::~Media()
 {
 }
 
@@ -228,7 +314,7 @@ void Media::Save(ostream& os){
 	outputRec.checkIn = checkedIn;
 	outputRec.id = mediaID;
 	strncpy(outputRec.author, author.c_str(), 15)[15] = '\0';
-	strncpy(outputRec.title, title.c_str(), 30)[30] = '\0';
+	strncpy(outputRec.title, title.c_str(), 50)[50] = '\0';
 	outputRec.type = type;
 	outputRec.due = due;
 	
@@ -238,14 +324,40 @@ void Media::Save(ostream& os){
 Media Media::read(istream& is){
 	MediaRec inputRec;
 	is.read(reinterpret_cast<char*>(&inputRec), sizeof(inputRec));
-	//MediaRec inputRec = *(reinterpret_cast<MediaRec*>(data));
-	Media item (inputRec.author, inputRec.title, inputRec.type);
+	
+	Media item (inputRec.author, inputRec.title, MediaTypes(inputRec.type));
 	item.AssignId(inputRec.id);
-	if (!inputRec.checkIn) item.checkedIn = false;
+	if (!inputRec.checkIn){
+		item.checkedIn = false;
+		item.due = inputRec.due;
+	}
+	else{
+		item.checkedIn = true;
+		item.due.SetDefaultDate();
+	}
 
 	return item;
 }
 
 int Media::getID(){
 	return mediaID;
+}
+
+void Media::display(){
+	cout << mediaID << ": " << author << " " << title;
+	if (checkedIn)
+		cout << " Available";
+	else{
+		cout << " Checked out";
+		due.display();
+	}
+	cout << endl;
+}
+
+bool Media::isOverdue(Date today){
+	return (today > due);
+}
+
+int Media::getLoanTime(){
+	return Utility::DaysByItemType[type];
 }
