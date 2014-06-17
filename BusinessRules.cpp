@@ -15,12 +15,17 @@ void BusinessRules::OpenFiles(string book, string patron){
 }
 
 void BusinessRules::CheckOutItem(string patronID, string itemID){
-	int pID=stoi(patronID);
+	int pID=stoi(patronID); //note invalid_argument exception needs to be caught if no exception could be performed.
 	int iID = stoi(itemID);
 	Media item;
 	Patron user = library.readPatron(pID);
 	if (user.canBorrow()){
-		 item = library.readBook(iID);
+		item = library.readBook(iID);
+		if (!user.isAdult()){
+			if (!item.isChildrenBook())
+				throw runtime_error("Children can only borrow children books");
+		}
+		
 		if (item.GetCheckedInStatus()){
 			user.checkoutBook(iID);
 			Date date = CalculateDueDate(item, today);
@@ -52,39 +57,47 @@ void BusinessRules::CheckInItem(string patronID, string itemID){
 	library.savePatron(user);
 }
 
-void BusinessRules::ListAllItems(){
+string BusinessRules::ListAllItems(){
+	string display;
 	vector<Media> allItems = library.readBook();
 	for (int i = 0; i < allItems.size(); ++i){
-		allItems[i].display();
+		display+=allItems[i].display();
 	}
+	return display;
 }
 
-void BusinessRules::ListAllPatrons(){
+string BusinessRules::ListAllPatrons(){
+	string display;
 	vector<Patron> allItems = library.readPatron();
 	for (int i = 0; i < allItems.size(); ++i){
-		allItems[i].displayPatronInfo();
+		display+=allItems[i].displayPatronInfo();
 	}
+	return display;
 }
 
-void BusinessRules::ListAllOverdueItems(){
+string BusinessRules::ListAllOverdueItems(){
+	string display;
 	vector<Media> allItems = library.readBook();
 	for (int i = 0; i < allItems.size(); ++i){
 		if (allItems[i].isOverdue(today)){
-			allItems[i].display();
+			display+=allItems[i].display();
 		}
 	}
+	return display;
 }
 
-void BusinessRules::ListBooksByPatron(string PatronID){
+string BusinessRules::ListBooksByPatron(string PatronID){
+	string display;
 	int pID = stoi(PatronID);
 	Patron user = library.readPatron(pID);
-	user.displayPatronInfo();
+	display+=user.displayPatronInfo();
 	vector<int> bookList = user.GetBookList();
 	cout << "Books checked out: \n";
 	for (int i = 0; i < bookList.size(); ++i){
 		Media item = library.readBook(bookList[i]);
-		item.display();
+		display+=item.display();
 	}
+	return display;
 }
 
 
