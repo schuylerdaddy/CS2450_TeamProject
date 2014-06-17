@@ -10,15 +10,15 @@ private:
 	static DataAccess library;
 	static Date today;
 	Date CalculateDueDate(Media, Date);
-	//Date CalculateToday();
+
 public:
 	BusinessRules();
 	void CheckOutItem(string patronId, string itemId);
 	void CheckInItem(string patronId, string itemId);
-	void ListAllItems();
-	void ListAllOverdueItems();
-	void ListBooksByPatron(string patronId);
-	void ListAllPatrons();
+	string ListAllItems();
+	string ListAllOverdueItems();
+	string ListBooksByPatron(string patronId);
+	string ListAllPatrons();
 	void AdvanceItemDate(string itemId);//????
 	void AddLibraryItem(string author, string title, MediaTypes itemType);
 	Date AdvanceDate();
@@ -26,5 +26,7 @@ public:
 	void AddPatron(string, string, bool);
 	
 };
+
+
 
 
