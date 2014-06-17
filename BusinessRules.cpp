@@ -28,7 +28,7 @@ void BusinessRules::CheckOutItem(string patronID, string itemID){
 		
 		if (item.GetCheckedInStatus()){
 			user.checkoutBook(iID);
-			Date date = CalculateDueDate(item, today);
+			Date date = CalculateDueDate(item);
 			item.CheckOut(date);
 		}
 		else
@@ -101,11 +101,11 @@ string BusinessRules::ListBooksByPatron(string PatronID){
 }
 
 
-Date BusinessRules::CalculateDueDate(Media item, Date today){
+Date BusinessRules::CalculateDueDate(Media item){
 	return today + item.getLoanTime();
 }
-Date BusinessRules::AdvanceDate(){
-	return today += 1;
+void BusinessRules::AdvanceDate(){
+	today += 1;
 }
 
 void BusinessRules::AddLibraryItem(	string author, string title, MediaTypes type){
