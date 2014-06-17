@@ -45,8 +45,6 @@ void Date::SetDefaultDate(){
 	year = 9999;
 }
 
-
-
 Date Date::operator+=(const Date& date){
 	day += date.day;
 	map<int, int> numday = Utility::GetDayCountbyMonth(year);
@@ -77,8 +75,9 @@ bool Date::operator> (const Date& date){
 
 }
 
-void Date::display(){
-	cout << month << "/" << day << "/" << year;
+string Date::display(){
+	string display = to_string(month) + "/" + to_string(day) + "/" + to_string(year);
+	return display;
 }
 
 //getters
@@ -200,8 +199,9 @@ bool Patron::canBorrow(){
 		return false;
 }
 
-void Patron::displayPatronInfo(){
-	cout << patronID << ": " << patronFirstName << " " << patronLastName<<endl;
+string Patron::displayPatronInfo(){
+	string display=to_string(patronID)+": "+patronFirstName+" "+patronLastName+"\n";
+	return display;
 }
 // The Patron Destructor
 // Purpose: To delete a patron
@@ -344,15 +344,19 @@ int Media::getID(){
 	return mediaID;
 }
 
-void Media::display(){
-	cout << mediaID << ": " << author << " " << title;
+string Media::display(){
+	string display;
+	display += to_string(mediaID); 
+	display = display + ": " + author + ", " + title + ". ";
+	
 	if (checkedIn)
-		cout << " Available";
+		display+= " Available";
 	else{
-		cout << " Checked out";
-		due.display();
+		display+= " Checked out. Due: ";
+		display+=due.display();
 	}
-	cout << endl;
+	display+="\n";
+	return display;
 }
 
 bool Media::isOverdue(Date today){
@@ -361,4 +365,10 @@ bool Media::isOverdue(Date today){
 
 int Media::getLoanTime(){
 	return Utility::DaysByItemType[type];
+}
+
+bool Media::isChildrenBook(){
+	if (type == 1) return true;
+	else
+		return false;
 }
