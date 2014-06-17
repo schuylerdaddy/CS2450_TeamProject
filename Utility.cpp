@@ -1,23 +1,25 @@
+#define _SCL_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include "Utility.h"
 
-map<MediaTypes,int> Utility::DaysByItemType = map<MediaTypes,int>();
+map<MediaTypes, int> Utility::DaysByItemType = map<MediaTypes, int>();
 
 Utility::Utility()
 {
-    LoadDaysByItemType();
+	LoadDaysByItemType();
 }
 
 void Utility::LoadDaysByItemType()
 {
-    DaysByItemType[AdultBook] = 14;
-    DaysByItemType[ChildBook] = 7;
-    DaysByItemType[DVD] = 2;
-    DaysByItemType[VideoTape] = 3;
+	DaysByItemType[AdultBook] = 14;
+	DaysByItemType[ChildBook] = 7;
+	DaysByItemType[DVD] = 2;
+	DaysByItemType[VideoTape] = 3;
 }
 
 bool isWhiteSpace(char c)
 {
-	return c == '\t' || c == '\r' || c == '\n' || c == '|' || c == ' '  || c =='\0';
+	return c == '\t' || c == '\r' || c == '\n' || c == '|' || c == ' ' || c == '\0';
 }
 
 string Trimfront(string s)
@@ -33,8 +35,8 @@ string Trimback(string s)
 	int i = s.length();
 	bool wSpaceFound = false;
 	for (; i >= 0 && isWhiteSpace(s[i]); --i)
-		if (isWhiteSpace(s[i]))
-			wSpaceFound = true;
+	if (isWhiteSpace(s[i]))
+		wSpaceFound = true;
 	return wSpaceFound ? s.substr(0, i + 1) : s.substr(0, i);
 }
 
@@ -63,18 +65,18 @@ string Utility::Trim(string s)
 string Utility::GetCurrentDate()
 {
 
-		time_t t = time(0);   // get time now
-		struct tm *now = nullptr;
-		localtime_s(now,&t);
+	time_t t = time(0);   // get time now
+	struct tm *now = nullptr;
+	now = localtime( &t);
 
-		return to_string(now->tm_mon + 1) + '-' + to_string(now->tm_mday) + '-' + to_string(now->tm_year + 1900);
+	return to_string(now->tm_mon + 1) + '-' + to_string(now->tm_mday) + '-' + to_string(now->tm_year + 1900);
 }
 
 bool Utility::IsLeapYear(int year)
 {
 	if (year % 4 != 0) return false;
 	else if (year % 100 != 0) return true;
-	else if (year % 400) return false; 
+	else if (year % 400) return false;
 	else return true;
 }
 
@@ -92,7 +94,7 @@ map<int, int> Utility::GetDayCountbyMonth()
 	m[10] = 31;
 	m[11] = 30;
 	m[12] = 31;
-		m[2] = 28;
+	m[2] = 28;
 
 	return m;
 }
