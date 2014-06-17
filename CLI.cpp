@@ -105,17 +105,17 @@ void CLI::RunUserCommand(char choice, Date& date) //How are we handeling the 'pr
 	case 'L':
 		cout << "All Books: " << endl;
 		//TODO: List all books (done below)
-		ListAllItems();
+		cout<<ListAllItems();
 		break;
 	case 'D':
 		cout << "Overdue Books: " << endl;
 		//TODO: List all overdue books that all patrons have (done below)
-		ListAllOverdueItems();
+		cout<<ListAllOverdueItems();
 		break;
 	case 'P':
 		patronID = GetIntegerInput();
 		//TODO: Get patron by ID (done below)
-		ListBooksByPatron(patronID);
+		cout<<ListBooksByPatron(patronID);
 		break;
 	case 'F':
 		cout << "Patrons: " << endl;
