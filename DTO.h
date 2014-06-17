@@ -24,7 +24,7 @@ public:
 	int GetYear();
 	Date operator+=(const Date&);
 	bool operator>(const Date&);
-	void display();
+	string display();
 private:
 	int month;
 	int day;
@@ -49,7 +49,8 @@ public:
 	void checkinBook(int);
 	void checkoutBook(int);
 	bool canBorrow();
-	void displayPatronInfo();
+	bool isAdult(){ return adult; };
+	string displayPatronInfo();
 	~Patron();
 private:
 	struct PatronRec{
@@ -84,10 +85,11 @@ public:
 	void CheckOut(Date); // Should there be a value passed here? bookID? Title?
 	void AssignId(int);
 	int getID();
+	bool isChildrenBook();
 	void Save(ostream&);
 	static Media read(istream&);
 	~Media();
-	void display();
+	string display();
 	bool isOverdue(Date);
 	int getLoanTime();
 private:
