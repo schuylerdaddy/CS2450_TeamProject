@@ -1,6 +1,10 @@
 #include <iostream>
 #include "CLI.h"
 
+using namespace std;
+
+BusinessRules CLI::br;
+
 // The CLI default constructor
 // Purpose: To initialize needed variables
 // Parameters: None
@@ -46,13 +50,18 @@ int CLI::GetIntegerInput()
 // -----------------------------------------------------------------
 char CLI::GetCharInput()
 {
-	cin >> charInput;
+	string input;
+	getline(cin, input);
+	input=Utility::Trim(input);
+	if (input.length() != 1)
+		throw runtime_error("Enter a single character");
+	charInput = input[0];
 	return charInput;
 }
 
 string CLI::GetStringInput()
 {
-	cin >> stringInput;
+	getline(cin,stringInput);
 	return stringInput;
 }
 
@@ -72,6 +81,8 @@ void CLI::MenuOptions()
 	cout << "D -> List overdue books" << endl;
 	cout << "P -> List a patron's books" << endl;
 	cout << "F -> Find a patron" << endl;
+	cout << "B -> Add a new item" << endl;
+	cout << "N -> Add a new patron" << endl;
 	cout << "A -> Advance the due date" << endl;
 	cout << "Q -> Save and Quit this program" << endl;
 	cout << "What would you like to do: ";
@@ -84,8 +95,9 @@ void CLI::MenuOptions()
 // Pre-conditions: User input valid option
 // Post-conditions: The correct actions are executed
 // -----------------------------------------------------------------
-void CLI::RunUserCommand(char choice, Date& date) //How are we handeling the 'present' date?
+void CLI::RunUserCommand(char choice) //How are we handeling the 'present' date?
 {
+	choice = toupper(choice);
 	switch (choice)
 	{
 	case 'O':
@@ -93,40 +105,47 @@ void CLI::RunUserCommand(char choice, Date& date) //How are we handeling the 'pr
 		patronID = GetStringInput();
 		cout << endl << "Enter book ID: ";
 		mediaID = GetStringInput();
-		//TODO: add the bookID to the correct patron with patronID (done below)
+		//TODO: add the bookID to the correct patron with patronID (done below) ???? 
 		CheckOutItem(patronID, mediaID);
 		break;
 	case 'I':
-		cout << "Enter Book ID: " << endl;
-		mediaID = GetIntegerInput();
+		//DO WE WANT TO CHECKIN BOOK WITH PATRON ID OR NOT 
+		cout << "Enter patron ID: ";
+		patronID = GetStringInput();
+		cout << "Enter Book ID: " << endl; 
+		mediaID = GetStringInput();
 		//TODO: Check in book by ID (done below)
 		CheckInItem(patronID, mediaID);
 		break;
 	case 'L':
 		cout << "All Books: " << endl;
-		//TODO: List all books (done below)
-		cout<<ListAllItems();
+		ListAllItems();
 		break;
 	case 'D':
 		cout << "Overdue Books: " << endl;
-		//TODO: List all overdue books that all patrons have (done below)
-		cout<<ListAllOverdueItems();
+		ListAllOverdueItems();
 		break;
 	case 'P':
-		patronID = GetIntegerInput();
+		patronID = GetStringInput();
 		//TODO: Get patron by ID (done below)
-		cout<<ListBooksByPatron(patronID);
+		ListBooksByPatron(patronID);
 		break;
 	case 'F':
 		cout << "Patrons: " << endl;
+		ListPatrons();
 		//TODO: List all patrons
 		//Nathan says: Do we want this option? Do we want patrons to see who all
 		//has access to the library?
 		break;
 	case 'A':
-		cout << "The day is now " << date->GetDay() << "/" << date.GetMonth() << "/" << date.GetYear() << endl;
-		//TODO: How are we handeling the current date vs. due date? (done below)
-		AdvanceItemDate(mediaID);
+		AdvanceDate();
+		cout << "Date is now:"<< br.DisplayCurrentDate() << endl;
+		break;
+	case 'B':
+		AddLibraryItem();
+		break;
+	case 'N':
+		AddPatron();
 		break;
 	case 'Q':
 		cout << "Ridicule is the best test of truth." << endl;
@@ -149,7 +168,15 @@ void CLI::RunUserCommand(char choice, Date& date) //How are we handeling the 'pr
 // -----------------------------------------------------------------
 void CLI::CheckOutItem(string patronId, string itemId)
 {
-
+	try{
+		br.CheckOutItem(patronID, itemId);
+	}
+	catch (runtime_error &e){
+		cout << e.what() << endl;
+	}
+	catch (invalid_argument &e){
+		cout << "Enter an integer for patron ID and item ID\n";
+	}
 }
 
 // The CheckInItem Method
@@ -161,7 +188,15 @@ void CLI::CheckOutItem(string patronId, string itemId)
 // -----------------------------------------------------------------
 void CLI::CheckInItem(string patronId, string itemId)
 {
-
+	try{ 
+		br.CheckInItem(patronID, itemId);
+	}
+	catch (runtime_error &e){
+		cout << e.what() << endl;
+	}
+	catch (invalid_argument &e){
+		cout << "Enter an integer for patron ID and item ID\n";
+	}
 }
 
 // The ListAllItems Method
@@ -171,10 +206,10 @@ void CLI::CheckInItem(string patronId, string itemId)
 // Pre-conditions: There are items in the library
 // Post-conditions: List of items in library are returned
 // -----------------------------------------------------------------
-vector<string> CLI::ListAllItems()
+void CLI::ListAllItems()
 {
-	vector<string> cool;
-	return cool;
+	string display = br.ListAllItems();
+	cout << display;
 }
 
 // The ListAllOverdueItems Method
@@ -184,10 +219,10 @@ vector<string> CLI::ListAllItems()
 // Pre-conditions: There are items that are overdue
 // Post-conditions: List of overdue items are returned
 // -----------------------------------------------------------------
-vector<string> CLI::ListAllOverdueItems()
+void CLI::ListAllOverdueItems()
 {
-	vector<string> rad;
-	return rad;
+	string display = br.ListAllOverdueItems();
+	cout << display;
 }
 
 // The ListBooksByPatron Method
@@ -197,10 +232,10 @@ vector<string> CLI::ListAllOverdueItems()
 // Pre-conditions: The patron is valid and has something checked out
 // Post-conditions: A list of items the patron has checked out is returned
 // -----------------------------------------------------------------
-vector<string> CLI::ListBooksByPatron(string patronId)
+void CLI::ListBooksByPatron(string patronId)
 {
-	vector<string> awesome;
-	return awesome;
+	string display = br.ListBooksByPatron (patronId);
+	cout << display;
 }
 
 // The AdvanceItemDate Method
@@ -210,9 +245,9 @@ vector<string> CLI::ListBooksByPatron(string patronId)
 // Pre-conditions: The item is checked out and needs to have an advanced due date
 // Post-conditions: The due date of the item is advanced
 // -----------------------------------------------------------------
-void CLI::AdvanceItemDate(string itemId)
+void CLI::AdvanceDate()
 {
-
+	br.AdvanceDate();
 }
 
 // The AddLibraryItem Method
@@ -222,7 +257,68 @@ void CLI::AdvanceItemDate(string itemId)
 // Pre-conditions: There is an item that needs to be added to the library
 // Post-conditions: Item is added to the library
 // -----------------------------------------------------------------
-void CLI::AddLibraryItem(string author, string title, int itemType)
-{
+void CLI::AddLibraryItem(){
 
+	string author, title, type;
+	int itemType;
+	cout << "Author: ";
+	getline(cin, author);
+	author = Utility::Trim(author);
+	cout << "\nTitle: ";
+	getline(cin, title);
+	title = Utility::Trim(title);
+	bool error;
+	do{
+		error = false;
+		cout << "\nItem Type (0-adult, 1-children, 2-DVD, 3-Video tape): ";
+		getline(cin, type);
+		try {
+			itemType = stoi(type);
+		}
+		catch (invalid_argument &e){
+			cout << "\nEnter an integer between 0 and 3";
+			error = true;
+		}
+		if (itemType > 3 || itemType < 0){
+			cout << "\nEnter an integer between 0 and 3";
+			error = true;
+		}
+	} while (error);
+	br.AddLibraryItem(author, title, MediaTypes(itemType));
+}
+
+void CLI::AddPatron(){
+	string firstName, lastName, adult;
+	bool isAdult;
+	cout << "First Name: ";
+	getline(cin, firstName);
+	firstName = Utility::Trim(firstName);
+	cout << "\nLast Name: ";
+	getline(cin, lastName);
+	lastName = Utility::Trim(lastName);
+	bool error;
+	do{
+		error = false;
+		cout << "\nIs new patron an adult (Y/N): ";
+		getline(cin, adult);
+		adult = Utility::Trim(adult);
+		if (toupper(adult[0]) == 'Y')
+			isAdult = true;
+		else if (toupper(adult[0]) == 'N')
+			isAdult = false;
+		else{
+			error = true;
+			cout << "\n Enter Y or N";
+		}
+	} while (error);
+	br.AddPatron(firstName, lastName, isAdult);
+}
+
+//open the datafiles
+void CLI::OpenFile(string bookFile, string patronFile){
+	br.OpenFiles(bookFile, patronFile);
+}
+
+void CLI::ListPatrons(){
+	cout<<br.ListAllItems();
 }
