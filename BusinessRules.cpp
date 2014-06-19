@@ -117,3 +117,7 @@ void BusinessRules::AddPatron(string first, string last, bool adult){
 	Patron user(first, last, adult);
 	library.addPatron(user);
 }
+
+string BusinessRules::DisplayCurrentDate(){
+	return today.display();
+}
