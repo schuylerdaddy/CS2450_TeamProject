@@ -15,16 +15,19 @@ public:
 	char GetCharInput();
 	string GetStringInput();
 	void MenuOptions();
-	void RunUserCommand(char, Date&);
+	void RunUserCommand(char);
 	void CheckOutItem(string, string);
 	void CheckInItem(string, string);
-	vector<string> ListAllItems();
-	vector<string> ListAllOverdueItems();
-	vector<string> ListBooksByPatron(string);
-	void AdvanceItemDate(string);
-	void AddLibraryItem(string, string, int); // Not sure what to pass here for Mediatypes in utility.h (used int for now)
+	void ListAllItems();
+	void ListAllOverdueItems();
+	void ListBooksByPatron(string);
+	void ListPatrons();
+	void AdvanceDate();
+	void AddLibraryItem(); // Not sure what to pass here for Mediatypes in utility.h (used int for now)
+	void AddPatron();
+	void OpenFile(string, string); //OpenFile(bookfile, patronfile)
 private:
-	BusinessRules br; 
+	static BusinessRules br;
 	int integerInput;
 	char charInput;
 	string stringInput;
@@ -32,4 +35,3 @@ private:
 	string patronID; // was int
 	string mediaID; // was int
 };
-
