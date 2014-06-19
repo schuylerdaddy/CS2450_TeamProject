@@ -71,6 +71,9 @@ public:
 	//parmeter: first name, last name, bool: true for adult, false for children
 	void AddPatron(string, string, bool);
 	
+	//display the current date
+	string DisplayCurrentDate();
+	
 };
 
 
