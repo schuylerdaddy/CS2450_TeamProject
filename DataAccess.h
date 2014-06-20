@@ -28,4 +28,5 @@ public:
 	vector<Patron> readPatron();
 	void savePatron(Patron);
 	void addPatron(Patron);
+	int getBorrower(int);
 };
