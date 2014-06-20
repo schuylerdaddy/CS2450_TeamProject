@@ -41,9 +41,12 @@ void BusinessRules::CheckOutItem(string patronID, string itemID){
 	library.savePatron(user);
 }
 
-void BusinessRules::CheckInItem(string patronID, string itemID){
-	int pID = stoi(patronID);
+void BusinessRules::CheckInItem(string itemID){
+	int pID;
 	int iID = stoi(itemID);
+		
+	pID = library.getBorrower(iID);
+	if (pID == 0) throw runtime_error("No record of borrower");
 	Patron user = library.readPatron(pID);
 	Media item = library.readBook(iID);
 
