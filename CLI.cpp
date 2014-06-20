@@ -110,12 +110,12 @@ void CLI::RunUserCommand(char choice) //How are we handeling the 'present' date?
 		break;
 	case 'I':
 		//DO WE WANT TO CHECKIN BOOK WITH PATRON ID OR NOT 
-		cout << "Enter patron ID: ";
-		patronID = GetStringInput();
+		//cout << "Enter patron ID: ";
+		//patronID = GetStringInput();
 		cout << "Enter Book ID: " << endl; 
 		mediaID = GetStringInput();
 		//TODO: Check in book by ID (done below)
-		CheckInItem(patronID, mediaID);
+		CheckInItem(mediaID);
 		break;
 	case 'L':
 		cout << "All Books: " << endl;
@@ -181,21 +181,21 @@ void CLI::CheckOutItem(string patronId, string itemId)
 
 // The CheckInItem Method
 // Purpose: To check in an item
-// Parameters: 2 strings (string patronId, string itemId)
+// Parameters: 1 string:  string itemId)
 // Returns: None
 // Pre-conditions: The item the user wants to check in is valid
 // Post-conditions: Item is checked in
 // -----------------------------------------------------------------
-void CLI::CheckInItem(string patronId, string itemId)
+void CLI::CheckInItem(string itemId)
 {
 	try{ 
-		br.CheckInItem(patronID, itemId);
+		br.CheckInItem(patronID);
 	}
 	catch (runtime_error &e){
 		cout << e.what() << endl;
 	}
 	catch (invalid_argument &e){
-		cout << "Enter an integer for patron ID and item ID\n";
+		cout << "Enter an integer for item ID\n";
 	}
 }
 
@@ -321,4 +321,4 @@ void CLI::OpenFile(string bookFile, string patronFile){
 
 void CLI::ListPatrons(){
 	cout<<br.ListAllItems();
-}
+} 
