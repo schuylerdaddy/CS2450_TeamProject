@@ -15,7 +15,7 @@ void BusinessRules::OpenFiles(string book, string patron){
 }
 
 void BusinessRules::CheckOutItem(string patronID, string itemID){
-	int pID=stoi(patronID); //note invalid_argument exception needs to be caught if no exception could be performed.
+	int pID=stoi(patronID); //note invalid_argument exception needs to be caught if no conversion could be performed.
 	int iID = stoi(itemID);
 	Media item;
 	Patron user = library.readPatron(pID);
@@ -45,7 +45,7 @@ void BusinessRules::CheckInItem(string itemID){
 	int pID;
 	int iID = stoi(itemID);
 		
-	pID = library.getBorrower(iID);
+	pID = getBorrower(iID);
 	if (pID == 0) throw runtime_error("No record of borrower");
 	Patron user = library.readPatron(pID);
 	Media item = library.readBook(iID);
@@ -123,4 +123,21 @@ void BusinessRules::AddPatron(string first, string last, bool adult){
 
 string BusinessRules::DisplayCurrentDate(){
 	return today.display();
+}
+
+int BusinessRules::getBorrower(int bookID){
+	int pID = 0;
+	int totalPatrons = library.getTotalPatrons();
+	for (int i = 1; i <= totalPatrons; ++i){
+		Patron user = library.readPatron(i);
+		vector<int> bookList = user.GetBookList();
+		for (int i = 0; i < bookList.size(); ++i){
+			if (bookID == bookList[i]){
+				pID = i;
+				break;
+			}
+		}
+		if (pID != 0) break;
+	}
+	return pID;
 }
