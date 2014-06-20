@@ -26,7 +26,7 @@ public:
 	//parameters: patronID and itemId as strings
 	//returns: nothing
 	//post-conditions: item and patron have been updated in the files
-	void CheckInItem(string patronId, string itemId);
+	void CheckInItem(string itemId);
 	
 	//List all items/books
 	//parameters: none
