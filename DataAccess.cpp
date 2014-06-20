@@ -103,3 +103,19 @@ void DataAccess::addPatron(Patron patronInfo){
 	patronStream.write(reinterpret_cast<char*>(&maxPatrons), sizeof(int));
 	savePatron(patronInfo);
 }
+
+int DataAccess::getBorrower(int bookID){
+	int pID = 0;
+	for (int i = 1; i <= maxPatrons; ++i){
+		Patron user = readPatron(i);
+		vector<int> bookList = user.GetBookList();
+		for (int i = 0; i < bookList.size(); ++i){
+			if (bookID == bookList[i]){
+				pID = i;
+				break;
+			}
+		}
+		if (pID != 0) break;
+	}
+	return pID;
+}
