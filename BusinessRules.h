@@ -13,6 +13,8 @@ private:
 	//parameter: Media object to be checked out
 	//returns: due date
 	Date CalculateDueDate(Media); 
+	
+	int getBorrower(int);
 
 public:
 	BusinessRules();
@@ -73,6 +75,8 @@ public:
 	
 	//display the current date
 	string DisplayCurrentDate();
+	
+
 	
 };
 
