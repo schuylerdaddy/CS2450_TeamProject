@@ -17,7 +17,7 @@ public:
 	void MenuOptions();
 	void RunUserCommand(char);
 	void CheckOutItem(string, string);
-	void CheckInItem(string, string);
+	void CheckInItem(string);
 	void ListAllItems();
 	void ListAllOverdueItems();
 	void ListBooksByPatron(string);
