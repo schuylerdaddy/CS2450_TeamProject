@@ -131,8 +131,8 @@ int BusinessRules::getBorrower(int bookID){
 	for (int i = 1; i <= totalPatrons; ++i){
 		Patron user = library.readPatron(i);
 		vector<int> bookList = user.GetBookList();
-		for (int i = 0; i < bookList.size(); ++i){
-			if (bookID == bookList[i]){
+		for (int j = 0; j < bookList.size(); ++j){
+			if (bookID == bookList[j]){
 				pID = i;
 				break;
 			}
