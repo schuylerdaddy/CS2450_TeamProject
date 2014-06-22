@@ -134,7 +134,6 @@ void Patron::AssignPatronId(int id)
 	}
 }
 
-
 Patron Patron::ReadPatron(istream& is){
 	PatronRec inputRec;
 	is.read(reinterpret_cast<char*>(&inputRec), sizeof(inputRec));
@@ -142,13 +141,14 @@ Patron Patron::ReadPatron(istream& is){
 	Patron user(inputRec.firstName, inputRec.lastName, inputRec.adult);
 	user.AssignPatronId(inputRec.id);
 	int i = 0;
-	while (inputRec.book[i] != 0){
+	while (inputRec.book[i] != 0 && user.bookList.size()<6){
 		user.bookList.push_back(inputRec.book[i]);
 		++i;
 	}
 
 	return user;	
 }
+
 
 void Patron::SavePatron(ostream& os){
 	if (!os)
