@@ -39,7 +39,7 @@ void DataAccess::openPatronFile(string patronFile){
 }
 Media DataAccess::readBook(int id){
 	//check for overflow of ID
-	if (id > maxBooks) throw runtime_error("overflow");
+	if (id > maxBooks) throw runtime_error("Book does not exist");
 	bookStream.seekg(id*BOOK_BLOCKSIZE, ios::beg);
 	Media temp = Media::read(bookStream);
 	if (!bookStream) throw runtime_error("error reading media information");
@@ -72,10 +72,10 @@ void DataAccess::addBook(Media bookInfo){
 
 Patron DataAccess::readPatron(int id){
 	//check for overflow of ID
-	if (id > maxPatrons) throw runtime_error("overflow");
+	if (id > maxPatrons) throw runtime_error("Patron does not exist");
 	patronStream.seekg(id*PATRON_BLOCKSIZE, ios::beg);
 	Patron temp = Patron::ReadPatron(patronStream);
-	if (!patronStream) throw runtime_error("error saving book information");
+	if (!patronStream) throw runtime_error("error reading patron information");
 	return temp;
 }
 
