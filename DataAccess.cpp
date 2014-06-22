@@ -42,7 +42,10 @@ Media DataAccess::readBook(int id){
 	if (id > maxBooks) throw runtime_error("Book does not exist");
 	bookStream.seekg(id*BOOK_BLOCKSIZE, ios::beg);
 	Media temp = Media::read(bookStream);
-	if (!bookStream) throw runtime_error("error reading media information");
+	if (!bookStream) { 
+		bookStream.clear();
+		throw runtime_error("error reading media information"); 
+	}
 	return temp;
 }
 
@@ -59,7 +62,10 @@ void DataAccess::saveBook(Media bookInfo){
 	if (id > maxBooks) throw runtime_error("overflow, error saving book information");
 	bookStream.seekg(id*BOOK_BLOCKSIZE, ios::beg);
 	bookInfo.Save(bookStream);
-	if (!bookStream) throw runtime_error("error saving book information");
+	if (!bookStream) {
+		bookStream.clear();
+		throw runtime_error("error saving book information");
+	}
 }
 
 void DataAccess::addBook(Media bookInfo){
@@ -75,7 +81,10 @@ Patron DataAccess::readPatron(int id){
 	if (id > maxPatrons) throw runtime_error("Patron does not exist");
 	patronStream.seekg(id*PATRON_BLOCKSIZE, ios::beg);
 	Patron temp = Patron::ReadPatron(patronStream);
-	if (!patronStream) throw runtime_error("error reading patron information");
+	if (!patronStream) {
+		patronStream.clear();
+		throw runtime_error("error saving book information");
+	}
 	return temp;
 }
 
@@ -92,8 +101,10 @@ void DataAccess::savePatron(Patron patronInfo){
 //	if (id > maxPatrons) throw runtime_error("overflow, error saving patron information");
 	patronStream.seekg(id*PATRON_BLOCKSIZE, ios::beg);
 	patronInfo.SavePatron(patronStream);
-	if (!patronStream) 
+	if (!patronStream) {
+		patronStream.clear();
 		throw runtime_error("error saving patron information");
+	}
 }
 
 void DataAccess::addPatron(Patron patronInfo){
