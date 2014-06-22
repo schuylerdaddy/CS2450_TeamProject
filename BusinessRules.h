@@ -48,7 +48,7 @@ public:
 	//list all patrons (for debugging, not needed in the final product)
 	//parameters: none
 	//returns: string containing all the info to be displayed
-	string ListAllPatrons
+	string ListAllPatrons();
 	
 	//not sure what this is for???
 	void AdvanceItemDate(string itemId);//????
