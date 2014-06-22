@@ -126,6 +126,7 @@ void CLI::RunUserCommand(char choice) //How are we handeling the 'present' date?
 		ListAllOverdueItems();
 		break;
 	case 'P':
+		cout << "Enter patron ID: ";
 		patronID = GetStringInput();
 		//TODO: Get patron by ID (done below)
 		ListBooksByPatron(patronID);
@@ -189,13 +190,13 @@ void CLI::CheckOutItem(string patronId, string itemId)
 void CLI::CheckInItem(string itemId)
 {
 	try{ 
-		br.CheckInItem(patronID);
+		br.CheckInItem(itemId);
 	}
 	catch (runtime_error &e){
 		cout << e.what() << endl;
 	}
 	catch (invalid_argument &e){
-		cout << "Enter an integer for item ID\n";
+		cout << "Enter an integer for patron ID and item ID\n";
 	}
 }
 
@@ -234,8 +235,17 @@ void CLI::ListAllOverdueItems()
 // -----------------------------------------------------------------
 void CLI::ListBooksByPatron(string patronId)
 {
-	string display = br.ListBooksByPatron (patronId);
-	cout << display;
+	string display;
+	try{
+		display = br.ListBooksByPatron(patronId);
+		cout << display;
+	}
+	catch (invalid_argument &e){
+		cout << "Enter an integer for patron ID \n";
+	}
+	catch (runtime_error &e){
+		cout << e.what();
+	}
 }
 
 // The AdvanceItemDate Method
@@ -320,5 +330,5 @@ void CLI::OpenFile(string bookFile, string patronFile){
 }
 
 void CLI::ListPatrons(){
-	cout<<br.ListAllItems();
+	cout << br.ListAllPatrons();
 } 
