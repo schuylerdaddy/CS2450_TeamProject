@@ -196,7 +196,7 @@ void CLI::CheckInItem(string itemId)
 		cout << e.what() << endl;
 	}
 	catch (invalid_argument &e){
-		cout << "Enter an integer for patron ID and item ID\n";
+		cout << "Enter an integer for item ID\n";
 	}
 }
 
@@ -209,8 +209,13 @@ void CLI::CheckInItem(string itemId)
 // -----------------------------------------------------------------
 void CLI::ListAllItems()
 {
-	string display = br.ListAllItems();
-	cout << display;
+	try{
+		string display = br.ListAllItems();
+		cout << display;
+	}
+	catch (runtime_error &e){
+		cout << e.what();
+	}
 }
 
 // The ListAllOverdueItems Method
@@ -222,8 +227,13 @@ void CLI::ListAllItems()
 // -----------------------------------------------------------------
 void CLI::ListAllOverdueItems()
 {
-	string display = br.ListAllOverdueItems();
-	cout << display;
+	try{
+		string display = br.ListAllOverdueItems();
+		cout << display;
+	}
+	catch (runtime_error &e){
+		cout << e.what();
+	}
 }
 
 // The ListBooksByPatron Method
@@ -330,5 +340,10 @@ void CLI::OpenFile(string bookFile, string patronFile){
 }
 
 void CLI::ListPatrons(){
-	cout << br.ListAllPatrons();
+	try{
+		cout << br.ListAllPatrons();
+	}
+	catch (runtime_error &e){
+		cout << e.what();
+	}
 } 
