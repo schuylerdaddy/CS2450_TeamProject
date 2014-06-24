@@ -68,7 +68,7 @@ void DataAccess::saveBook(Media bookInfo){
 	}
 }
 
-void DataAccess::addBook(Media bookInfo){
+void DataAccess::addBook(Media& bookInfo){
 	maxBooks++;
 	bookInfo.AssignId(maxBooks);
 	bookStream.seekg(0, ios::beg);
@@ -107,7 +107,7 @@ void DataAccess::savePatron(Patron patronInfo){
 	}
 }
 
-void DataAccess::addPatron(Patron patronInfo){
+void DataAccess::addPatron(Patron& patronInfo){
 	maxPatrons++;
 	patronInfo.AssignPatronId(maxPatrons);
 	patronStream.seekg(0, ios::beg);
