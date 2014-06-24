@@ -23,7 +23,7 @@ public:
 	void ListBooksByPatron(string);
 	void ListPatrons();
 	void AdvanceDate();
-	void AddLibraryItem(); // Not sure what to pass here for Mediatypes in utility.h (used int for now)
+	void AddLibraryItem(); 
 	void AddPatron();
 	void OpenFile(string, string); //OpenFile(bookfile, patronfile)
 private:
@@ -32,6 +32,7 @@ private:
 	char charInput;
 	string stringInput;
 	Date date;
-	string patronID; // was int
-	string mediaID; // was int
+	string patronID; 
+	string mediaID; 
 };
+
