@@ -23,10 +23,16 @@ public:
 	Media readBook(int);
 	vector<Media> readBook();
 	void saveBook(Media);
-	void addBook(Media bookInfo);
+	void addBook(Media& bookInfo);
 	Patron readPatron(int);
 	vector<Patron> readPatron();
 	void savePatron(Patron);
-	void addPatron(Patron);
+	void addPatron(Patron&);
 	int getTotalPatrons();
+
+	//for unit testing
+	bool mediaIsOpen(){ return bookStream.is_open() && bookStream.good(); };
+	bool patronIsOpen(){ return patronStream.is_open() && bookStream.good(); };
+
 };
+
