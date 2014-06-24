@@ -25,7 +25,7 @@ public:
 	//date set as 1/1/9999
 	void SetDefaultDate();
 	
-	//getters, shoudl we delete them, never used
+	//getters, only used for unit testing
 	int GetMonth();
 	int GetDay();
 	int GetYear();
@@ -45,7 +45,7 @@ inline Date operator+(Date date1, const Date& date2){
 	return date1 += date2;
 }
 
-// This class models a Date. It contains key information
+// This class models a Patron. It contains key information
 // about a checked-out-item and methods to manage that data
 class Patron
 {
