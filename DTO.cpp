@@ -134,6 +134,7 @@ void Patron::AssignPatronId(int id)
 	}
 }
 
+
 Patron Patron::ReadPatron(istream& is){
 	PatronRec inputRec;
 	is.read(reinterpret_cast<char*>(&inputRec), sizeof(inputRec));
@@ -148,7 +149,6 @@ Patron Patron::ReadPatron(istream& is){
 
 	return user;	
 }
-
 
 void Patron::SavePatron(ostream& os){
 	if (!os)
@@ -200,9 +200,21 @@ bool Patron::canBorrow(){
 }
 
 string Patron::displayPatronInfo(){
-	string display=to_string(patronID)+": "+patronFirstName+" "+patronLastName+"\n";
+	string temp = to_string(patronID);
+	temp.append(4 - temp.length(),' ');
+	string first = patronFirstName;
+	first.append(15 - first.length(), ' ');
+	string last = patronLastName;
+	last.append(15 - last.length(), ' ');
+	string display=temp+": "+first+" "+last;
+	if (adult)
+		display += " Adult\n\n";
+	else
+		display += " Child\n\n";
 	return display;
 }
+
+
 // The Patron Destructor
 // Purpose: To delete a patron
 // Parameters: None
@@ -299,6 +311,7 @@ void Media::AssignId(int id)
 		throw runtime_error("can't reassign book's id");
 }
 
+
 // The Book destructor
 // Purpose: To destroy a book
 // Parameters: None
@@ -346,16 +359,21 @@ int Media::getID(){
 
 string Media::display(){
 	string display;
-	display += to_string(mediaID); 
-	display = display + ": " + author + ", " + title + ". ";
+	string temp= to_string(mediaID); 
+	temp.append(4 - temp.length(), ' ');
+	string tempAuthor = author;
+	tempAuthor.append(15 - tempAuthor.length(), ' ');
+	string tempTitle = title;
+	tempTitle.append(45 - tempTitle.length(), ' ');
+	display = temp + ": " + tempAuthor  + tempTitle ;
 	
 	if (checkedIn)
-		display+= " Available";
+		display+= "Available";
 	else{
-		display+= " Checked out. Due: ";
+		display+= "Due:";
 		display+=due.display();
 	}
-	display+="\n";
+	display+="\n\n";
 	return display;
 }
 
@@ -372,3 +390,4 @@ bool Media::isChildrenBook(){
 	else
 		return false;
 }
+
